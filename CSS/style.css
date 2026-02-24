@@ -1038,6 +1038,10 @@ header .container {
     display: flex;
     gap: 15px;
 }
+.social-icons svg{
+    width: 20px;
+    height: 20px;
+}
 
 .social-icons a {
     color: #fff;
