@@ -24,7 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const slides = document.querySelectorAll('.slide');
     const prevBtn = document.querySelector('.slider-prev');
     const nextBtn = document.querySelector('.slider-next');
+    const heroDotsContainer = document.getElementById('hero-dots');
     let currentSlide = 0;
+
+    // Dynamically create dots
+    slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.classList.add('hero-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.dataset.slide = i;
+        dot.addEventListener('click', () => {
+            currentSlide = i;
+            showSlide(currentSlide);
+        });
+        heroDotsContainer.appendChild(dot);
+    });
+
+    const heroDotEls = heroDotsContainer.querySelectorAll('.hero-dot');
 
     function showSlide(index) {
         slides.forEach((slide, i) => {
@@ -33,6 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 slide.classList.add('active');
             }
         });
+        heroDotEls.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+        currentSlide = index;
     }
 
     function nextSlide() {
@@ -454,6 +474,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = false;
             }
         });
+    });
+    // ==========================================
+    // Testimonial Read More / Read Less Toggle
+    // ==========================================
+    function initTestimonialReadMore() {
+        const testimonialTexts = document.querySelectorAll('.testimonial-text');
+
+        testimonialTexts.forEach(text => {
+            const btn = text.nextElementSibling;
+            if (!btn || !btn.classList.contains('testimonial-read-more')) return;
+
+            // Reset expanded state for accurate measurement
+            text.classList.remove('expanded');
+            btn.textContent = 'Read More';
+
+            // Check if content overflows (more than 5 lines)
+            if (text.scrollHeight > text.clientHeight + 1) {
+                btn.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+    }
+
+    // Toggle handler
+    document.querySelectorAll('.testimonial-read-more').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const text = btn.previousElementSibling;
+            if (!text) return;
+
+            const isExpanded = text.classList.toggle('expanded');
+            btn.textContent = isExpanded ? 'Read Less' : 'Read More';
+        });
+    });
+
+    // Run on load and on resize
+    initTestimonialReadMore();
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(initTestimonialReadMore, 250);
     });
 
 });
