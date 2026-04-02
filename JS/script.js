@@ -476,6 +476,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     // ==========================================
+    // Counter Animation for Stats
+    // ==========================================
+    function initCounterAnimation() {
+        const counters = document.querySelectorAll('.counter');
+
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    const target = parseInt(entry.target.dataset.target);
+                    const suffix = entry.target.dataset.suffix || '';
+                    let current = 0;
+                    const increment = target / 50; // 50 steps for smooth animation
+                    const duration = 2000; // 2 seconds
+                    const stepDuration = duration / 50;
+
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            entry.target.textContent = current + suffix;
+                            clearInterval(timer);
+                        } else {
+                            entry.target.textContent = Math.floor(current) + suffix;
+                        }
+                    }, stepDuration);
+
+                    entry.target.dataset.animated = 'true';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+    }
+
+    initCounterAnimation();
+
+    // ==========================================
     // Testimonial Read More / Read Less Toggle
     // ==========================================
     function initTestimonialReadMore() {
